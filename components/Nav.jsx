@@ -7,18 +7,18 @@ import { signIn, signOut, useSession, getProviders } from "next-auth/react"; // 
 
 // Start of the component
 const Nav = () => {
-  const isUserLoggedIn = true; // check if the user is logged in
+  const { data: session} = useSession(); // check if the user is logged in
   const [providers, setProviders] = useState(null);
   const [toggleDropdown, setToggleDropdown] = useState(false); // check if the toggle menu is clicked
 
   // get response from getProviders function from the beginning of rendering the component
   useEffect(() => {
-    const setProviders = async () => {
+    const setUpProviders = async () => {
       const response = await getProviders();
 
       setProviders(response); // saving the response in the "providers" state
     };
-    setProviders(); // calling the function "setProviders"
+    setUpProviders(); // calling the function "setProviders"
   }, []);
 
   return (
@@ -36,10 +36,10 @@ const Nav = () => {
         <p className="logo_text">Promptopia</p>
       </Link>
       {/* ---------------- */}
-      
+
       {/* Desktop Navigation */}
       <div className="sm:flex hidden">
-        {isUserLoggedIn ? ( 
+        {session?.user ? ( 
           // display these links if the user is logged in
           <div className="flex gap-3 md:gap-5">
             <Link href="/create-prompt" className="black_btn">
@@ -50,7 +50,7 @@ const Nav = () => {
             </button>
             <Link href="/profile">
               <Image
-                src="/assets/images/logo.svg"
+                src={session?.user.image}
                 width={37}
                 height={37}
                 className="rounded-full"
@@ -78,11 +78,11 @@ const Nav = () => {
       {/* Mobile Navigation */}
 
       <div className="sm:hidden flex relative">
-        {isUserLoggedIn ? (
+        {session?.user ? (
           // display this if the user is logged in
           <div className="flex">
             <Image
-              src="/assets/images/logo.svg"
+              src={session?.user.image}
               width={37}
               height={37}
               className="rounded-full"
